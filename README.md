@@ -1,3 +1,7 @@
+# NOTE ABOUT THIS REPO AND THE RETA WEBAPP BY LUKE KERBS
+
+This repo was created for the need of public access to SupertechFT's RETA webapp through github. Original RETA webapp was developed by Luke Kerbs.
+
 # RETA (Robotics Educational Teaching Agent)
 
 RETA is a Python / [Flask](https://flask.palletsprojects.com/en/1.1.x/) based web application for teaching and learning robotics from anywhere. It is a web-based interface for remotely teaching and learning robotics. RETA is teaching tool for instructors and it offers students instant, live remote access to robots from their laptop.
