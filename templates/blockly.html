@@ -1,0 +1,549 @@
+<!DOCTYPE html> 
+<html lang='en'> 
+	<head> 
+    <title>RETA</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <!-- javascript start -->
+    <script src="https://kit.fontawesome.com/09fb2cec73.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- javascript end -->
+    <!-- blockly imports start -->
+    <script src="{{url_for('static', filename='blockly/blockly_compressed.js')}}"></script>
+    <script src="{{url_for('static', filename='blockly/blocks_compressed.js')}}"></script>
+    <script src="{{url_for('static', filename='blockly/python_compressed.js')}}"></script>
+    <script src="{{url_for('static', filename='js/custom_blocks.js')}}"></script>
+    <script src="{{url_for('static', filename='js/custom_generators.js')}}"></script>
+    <script src="{{url_for('static', filename='blockly/msg/en.js')}}"></script>
+    <!-- blockly import ends -->
+    <!-- css start -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/sidenav.css')}}"/>
+    <style>
+      .aligned {
+          display: flex;
+          align-items: center;
+          padding: 1em;
+      }
+    </style>
+    <!-- css end -->
+	</head> 
+	<body style="width: 100%; height: 95vh; background: white;"> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- intro pop-up start -->
+    <div id="popUp" class="jumbotron shadow animate__animated animate__fadeIn animate__delay-1s" style="width:50%;  z-index: 31; position: absolute; left: 50%; top: 50%;   -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); padding: 3%;">
+      <h1 style="text-align: center;">Welcome to RETA Block</h1>
+      <p style="  text-align: justify; text-justify: inter-word;">RETA Block is an intuitive, visual code editor for programming robotic arm movements. Simply drag and drop code blocks into the editor to program robotic arm movements.</p>
+      <button class="btn btn-block btn-light hover" style="margin-top: auto;" onclick="hidePopUp();">Continue</button>
+    </div>
+    <!-- intro pop-up end -->
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="/" class="btn btn-success" style="text-align: center;">Control Panel</a> <br>
+      <a href="/blockly" class="btn btn-success" style="text-align: center;">Blockly</a> <br>
+    </div>
+
+    <!-- Use any element to open the sidenav -->
+    <div class="aligned" style="height: 10vh; background: #16222A; background: -webkit-linear-gradient(to right, #3A6073, #16222A); background: linear-gradient(to right, #3A6073, #16222A);">
+      <span onclick="openNav()" style="display: inline-block; "><button class="btn btn-success"><i class="fas fa-bars"></i></button></span>
+      <div style="margin-left: auto; ">
+        <h2 style="display: inline-block; order: 2; color: white;">RETA</h2>
+        <!--
+        <img class="no-drag" style="height: auto; vertical-align: middle; display: inline-block; order: 2;" src="{{url_for('static', filename='img/logo.svg')}}">
+        -->
+      </div>
+    </div>
+
+    <!-- page start -->
+    <div class="row" style=" height:70vh; padding-left:1em; padding-right:1em; padding-top:1em; ">
+      <div class="col-md-5"  style="height:100%">
+        <!-- Blockly Area Start -->
+        <div id="blocklyDiv" style=" width: 100%; height: 100%; border-radius: 22px; "></div>
+        <xml xmlns="https://developers.google.com/blockly/xml" id="toolbox" class="toolbox" style="display: none; height:0;"> 
+          <category name="Logic" colour="210">
+            <block type="controls_if"></block>
+            <block type="logic_compare"></block>
+            <block type="logic_operation"></block>
+            <block type="logic_negate"></block>
+            <block type="logic_boolean"></block>
+            <block type="logic_null"></block>
+            <block type="logic_ternary"></block>
+          </category>
+          <category name="Loops" colour="120">
+            <block type="controls_repeat_ext">
+              <value name="TIMES">
+                <shadow type="math_number">
+                  <field name="NUM">10</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="controls_whileUntil"></block>
+            <block type="controls_for">
+              <value name="FROM">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <value name="TO">
+                <shadow type="math_number">
+                  <field name="NUM">10</field>
+                </shadow>
+              </value>
+              <value name="BY">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="controls_forEach"></block>
+            <block type="controls_flow_statements"></block>
+          </category>
+          <category name="Math" colour="230">
+            <block type="math_number"></block>
+            <block type="math_arithmetic">
+              <value name="A">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <value name="B">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_single">
+              <value name="NUM">
+                <shadow type="math_number">
+                  <field name="NUM">9</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_trig">
+              <value name="NUM">
+                <shadow type="math_number">
+                  <field name="NUM">45</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_constant"></block>
+            <block type="math_number_property">
+              <value name="NUMBER_TO_CHECK">
+                <shadow type="math_number">
+                  <field name="NUM">0</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_round">
+              <value name="NUM">
+                <shadow type="math_number">
+                  <field name="NUM">3.1</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_on_list"></block>
+            <block type="math_modulo">
+              <value name="DIVIDEND">
+                <shadow type="math_number">
+                  <field name="NUM">64</field>
+                </shadow>
+              </value>
+              <value name="DIVISOR">
+                <shadow type="math_number">
+                  <field name="NUM">10</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_constrain">
+              <value name="VALUE">
+                <shadow type="math_number">
+                  <field name="NUM">50</field>
+                </shadow>
+              </value>
+              <value name="LOW">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <value name="HIGH">
+                <shadow type="math_number">
+                  <field name="NUM">100</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_random_int">
+              <value name="FROM">
+                <shadow type="math_number">
+                  <field name="NUM">1</field>
+                </shadow>
+              </value>
+              <value name="TO">
+                <shadow type="math_number">
+                  <field name="NUM">100</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="math_random_float"></block>
+          </category>
+          <category name="Text" colour="160">
+            <block type="text"></block>
+            <block type="text_join"></block>
+            <block type="text_append">
+              <value name="TEXT">
+                <shadow type="text"></shadow>
+              </value>
+            </block>
+            <block type="text_length">
+              <value name="VALUE">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_isEmpty">
+              <value name="VALUE">
+                <shadow type="text">
+                  <field name="TEXT"></field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_indexOf">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+              <value name="FIND">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_charAt">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+            </block>
+            <block type="text_getSubstring">
+              <value name="STRING">
+                <block type="variables_get">
+                  <field name="VAR">text</field>
+                </block>
+              </value>
+            </block>
+            <block type="text_changeCase">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_trim">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_print">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="text_prompt_ext">
+              <value name="TEXT">
+                <shadow type="text">
+                  <field name="TEXT">abc</field>
+                </shadow>
+              </value>
+            </block>
+          </category>
+          <category name="Lists" colour="260">
+            <block type="lists_create_with">
+              <mutation items="0"></mutation>
+            </block>
+            <block type="lists_create_with"></block>
+            <block type="lists_repeat">
+              <value name="NUM">
+                <shadow type="math_number">
+                  <field name="NUM">5</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="lists_length"></block>
+            <block type="lists_isEmpty"></block>
+            <block type="lists_indexOf">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_getIndex">
+              <value name="VALUE">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_setIndex">
+              <value name="LIST">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_getSublist">
+              <value name="LIST">
+                <block type="variables_get">
+                  <field name="VAR">list</field>
+                </block>
+              </value>
+            </block>
+            <block type="lists_split">
+              <value name="DELIM">
+                <shadow type="text">
+                  <field name="TEXT">,</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="lists_sort"></block>
+          </category>
+          <category name="Colour" colour="20">
+            <block type="colour_picker"></block>
+            <block type="colour_random"></block>
+            <block type="colour_rgb">
+              <value name="RED">
+                <shadow type="math_number">
+                  <field name="NUM">100</field>
+                </shadow>
+              </value>
+              <value name="GREEN">
+                <shadow type="math_number">
+                  <field name="NUM">50</field>
+                </shadow>
+              </value>
+              <value name="BLUE">
+                <shadow type="math_number">
+                  <field name="NUM">0</field>
+                </shadow>
+              </value>
+            </block>
+            <block type="colour_blend">
+              <value name="COLOUR1">
+                <shadow type="colour_picker">
+                  <field name="COLOUR">#ff0000</field>
+                </shadow>
+              </value>
+              <value name="COLOUR2">
+                <shadow type="colour_picker">
+                  <field name="COLOUR">#3333ff</field>
+                </shadow>
+              </value>
+              <value name="RATIO">
+                <shadow type="math_number">
+                  <field name="NUM">0.5</field>
+                </shadow>
+              </value>
+            </block>
+          </category>
+          <sep></sep>
+          <category name="Variables" colour="330" custom="VARIABLE"></category>
+          <category name="Functions" colour="290" custom="PROCEDURE"></category>
+          <sep></sep>
+          <category name="Robot Control" colour="100">
+              <block type="home"></block>
+              <block type="move_to">
+                <value name="j1">
+                  <shadow type="math_number">
+                    <field name="j1-default">0</field>
+                  </shadow>
+                </value>
+                <value name="j2">
+                  <shadow type="math_number">
+                    <field name="j2-default">0</field>
+                  </shadow>
+                </value>
+                <value name="j3">
+                  <shadow type="math_number">
+                    <field name="j3-default">0</field>
+                  </shadow>
+                </value>
+              </block>
+              <block type="gripper"></block>
+              <block type="pause">
+                <value name="pause">
+                  <shadow type="math_number">
+                    <field name="TIME-default">5</field>
+                  </shadow>
+                </value>
+              </block>
+          </category>
+          <sep></sep>
+          <category name="Block Library" colour="260" id="blockLibCategory"></category>
+        </xml>
+        <!-- blockly area end -->
+      </div>
+
+      <!-- Video Area Start -->
+      <div class="col-7" style=" height:100%; width:100%;">
+        <div id="carouselExampleIndicators" class="carousel slide" data-interval="false" style="max-height:100%; margin:auto; overflow:hidden;">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          </ol>
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <img id="video" class="d-block w-100" src="{{ url_for('video_feed') }}" alt="First slide"  >
+            </div>
+            <div class="carousel-item">
+              <img id="video2" class="d-block w-100" src="{{ url_for('video_feed2') }}" alt="Second slide">
+            </div>
+          </div>
+          <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+    </div>
+      <!-- Video Area End -->
+    </div>
+
+    <div class="row" style="height: 20vh; padding: 1em;">
+      <div class="col-md-5" style="height:100%;">
+
+        <!-- run code button start  -->
+        <form style="height:100%; width: 100%;">
+          <button id="nameInput"  type="submit" onclick="return playRunCodeSound();" class="btn btn-success hover" style="height:100%; width:100%;  border-radius: 8px;"><div id="runCodeText"><h2>🚀 Launch</h2></div></button>
+        </form>
+        <!-- run code button end  -->
+
+      </div>
+      <div class="col-md-7" style="height:100%;"></div>
+
+    </div>
+
+
+
+
+
+
+    <!-- page end -->
+
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function(){
+          var cams = JSON.parse('{{ cams | tojson}}');  
+          console.log(cams);
+
+          if (cams.length == 0) {
+            console.log('No cameras detected.');
+            document.getElementById("video").src="{{url_for('static', filename='img/static.gif')}}";
+            document.getElementById("video2").src="{{url_for('static', filename='img/static.gif')}}";
+          }
+        });
+      
+    </script>
+
+
+
+    <!-- Inject Blockly Start -->
+    <script>
+      var workspace = Blockly.inject('blocklyDiv',
+          {media: "{{url_for('static', filename='blockly/media/')}}",
+            toolbox: document.getElementById('toolbox')});
+    </script>
+    <!-- Inject Blockly End -->
+    <!-- Function For Converting Blockly To Python Start -->
+    <script>
+      function code() {
+      // get code from blockly
+      var code = Blockly.Python.workspaceToCode(workspace);
+      document.getElementById("nameInput").value = code;
+      // update code on screen
+      alert(code);
+      
+      }
+    </script>
+    <script>
+      function playRunCodeSound() {
+          var audio = new Audio("{{url_for('static', filename='sound/message_send.mp3')}}");
+          audio.play();
+          document.getElementById("runCodeText").className = 'animate__animated animate__bounceOutUp';
+          document.getElementById("nameInput").className = 'btn btn-success hover animate__animated animate__rubberBand';
+          setTimeout(() => {  document.getElementById("nameInput").disabled = true; }, 500);
+          
+          setTimeout(() => {  
+            document.getElementById("nameInput").disabled = false;
+            document.getElementById("runCodeText").className = 'animate__animated animate__bounceInDown';
+            var audio = new Audio("{{url_for('static', filename='sound/message_recieve.mp3')}}");
+            audio.play();
+          }, 6000);
+        }
+    </script>
+    <script>
+      function hidePopUp() {
+          var audio = new Audio("{{url_for('static', filename='sound/zen1.mp3')}}");
+          audio.play();
+          document.getElementById("popUp").className = 'animate__animated animate__fadeOut';
+          setTimeout(() => {  document.getElementById("popUp").style = 'display: none;'; }, 1100);
+        }
+    </script>
+    <!-- Function For Converting Blockly To Python Start -->
+    <script>
+      function myUpdateFunction(event) {
+          var code = Blockly.Python.workspaceToCode(workspace);
+          document.getElementById('nameInput').value = code;
+        }
+      workspace.addChangeListener(myUpdateFunction);
+    </script>
+    <script>
+      $(document).ready(function() {
+      $('form').on('submit', function(event) {
+          $.ajax({
+              data : {
+                  name : $('#nameInput').val(),
+              },
+              type : 'POST',
+              url : '/process'
+          })
+          .done(function(data) {
+              if (data.error) {
+                  $('#errorAlert').text(data.error).show();
+                  $('#successAlert').hide();
+                }
+              else {
+                  $('#successAlert').text(data.name).show();
+                  $('#errorAlert').hide();
+                }
+              });
+              event.preventDefault();
+            });
+          });
+
+      // set the width of the side navigation to 250px and the left margin of the page content to 250px
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "270px";
+        document.getElementById("main").style.marginLeft = "270px";
+      }
+
+      // set the width of the side navigation to 0 and the left margin of the page content to 0 
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+      }
+    </script>
+	</body> 
+</html>

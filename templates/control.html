@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>RETA</title>
+    <meta charset="utf-8">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- javascript start -->
+    <script src="https://kit.fontawesome.com/09fb2cec73.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <!-- javascript end -->
+    <!-- css start -->
+    <link rel="stylesheet" href="{{url_for('static', filename='css/control_panel.css')}}"/>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/sidenav.css')}}"/>
+    <!-- css end -->
+    <style>
+      .aligned {
+          display: flex;
+          align-items: center;
+          padding: 1em;
+      }
+      .control-on {
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+
+      }
+      .control-off {
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        display: none;
+      }
+    </style>
+
+
+    <script>
+      $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();   
+      });
+    </script>
+  </head>
+  <body style="height:100vh; overflow: hidden; background-color:white;">
+    
+
+    <div id="mySidenav" class="sidenav">
+      <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      <a href="/" class="btn btn-success" style="text-align: center;">Control Panel</a> <br>
+      <a href="/blockly" class="btn btn-success" style="text-align: center;">Blockly</a> <br>
+    </div>
+
+    <!-- Use any element to open the sidenav -->
+    <div class="aligned" style="height: 10vh; background: #16222A; background: -webkit-linear-gradient(to right, #3A6073, #16222A); background: linear-gradient(to right, #3A6073, #16222A);">
+      <span onclick="openNav()" style="display: inline-block; "><button class="btn btn-success"><i class="fas fa-bars"></i></button></span>
+      <div style="margin-left: auto; ">
+        <h2 style="display: inline-block; order: 2; color: white;">RETA</h2>
+        <!--
+        <img class="no-drag" style="height:30px; display: inline-block; order: 2;" src="{{url_for('static', filename='img/logo.svg')}}">
+        -->
+      </div>
+    </div>
+
+
+      <div class="row" style="padding:2em;">
+        <!-- control panel start -->
+        <div class="col-md-5" style="height:80vh; font-size: 2em;">
+          <div style="margin:auto;">
+          <!-- control pad start -->
+
+          <div id="polar-control" class="control-on">
+            <nav class="shadow control-panel-btns" style="background-color:#60B8CE;">
+              <a id=j2-plus class="button top btn hover" href="#"><i class="fas fa-arrow-up"></i></a>
+              <a id=clockwise  class="button right btn hover" href="#"><i class="fas fa-redo-alt"></i></a>
+              <a id=counter-clockwise class="button left btn hover" href="#"><i class="fas fa-undo-alt"></i></a>
+              <a id=j2-minus  class="button bottom btn hover" href="#"><i class="fas fa-arrow-down"></i></a>
+              <a id=j3-minus  class="center-button-1 hover" href="#"></a>
+              <a id=j3-plus  class="center-button-2 hover" href="#"></a>
+            </nav>
+          </div>
+
+          <div id="cartesian-control" class="control-off">
+            <nav class="shadow control-panel-btns" style="background-color:green;">
+              <a id=x-plus class="button top btn hover" href="#"><i class="fas fa-arrow-up"></i></a>
+              <a id=y-plus  class="button right btn hover" href="#"><i class="fas fa-redo-alt"></i></a>
+              <a id=y-minus class="button left btn hover" href="#"><i class="fas fa-undo-alt"></i></a>
+              <a id=x-minus  class="button bottom btn hover" href="#"><i class="fas fa-arrow-down"></i></a>
+              <a id=z-plus  class="center-button-1 hover" href="#"></a>
+              <a id=z-minus  class="center-button-2 hover" href="#"></a>
+            </nav>
+          </div>
+
+          <!-- control pad end -->
+          <!-- gripper controls start -->
+          <div  style="text-align: center;">
+            <a href=# id=grip><button class='btn btn-default' data-toggle="tooltip" title="Close Gripper" style="border: 2px solid black;"><i class="fas fa-hand-rock"></i></button></a>
+            <a href=# id=release><button class='btn btn-default' data-toggle="tooltip" title="Open Gripper" style="border: 2px solid black;"><i class="fas fa-hand-paper"></i></button></a>
+            <a href=# id=disable><button class='btn btn-default' data-toggle="tooltip" title="Release Gripper" style="border: 2px solid black;"><i class="fas fa-stop-circle"></i></button></a>
+            <a href=# id=home><button class='btn btn-default' data-toggle="tooltip" title="Home Device"  style=" border: 2px solid black;"><i class="fas fa-home"></i></button></a>
+            <button class='btn btn-secondary disabled' id="cartesian" data-toggle="tooltip" title="Cartesian Control" onclick="toggleCartesian()" style=" border: 2px solid black;"><i class="fas fa-arrows-alt"></i></button>
+            <button class='btn btn-success active' id="polar" data-toggle="tooltip" title="Polar Control" onclick="togglePolar()"  style="border: 2px solid black;"><i class="fas fa-drafting-compass"></i></button>
+          </div>
+          <!-- gripper controls end -->
+          <!-- speed slider start -->
+          <div style="text-align: center;">
+            <form>
+              <h3 style="display: inline-block;">Speed</h3>
+              <input id=speed type="range" min="1" max="20" value="2.5" style="display: inline-block;"> 
+              <button type="submit" class="btn btn-success hover" style="display: inline-block;">Set Speed</button>
+            </form>
+          </div> 
+          <!-- speed slider end -->
+        </div>
+        </div>
+        <!-- control panel end -->
+
+        <!-- video area start -->   
+        <div class="col-md-7 " style=" height:90vh;">
+            <div id="carouselExampleIndicators" class="carousel slide" data-interval="false" style="width:90vh; margin:auto;">
+              <ol class="carousel-indicators">
+                <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+              </ol>
+              <div class="carousel-inner" style="border:solid 2px green; border-radius: 22px; overflow: hidden; -webkit-transform: translateZ(0); box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);">
+                <div class="carousel-item active">
+                  <img id="video" class="d-block w-100" src="{{ url_for('video_feed') }}" alt="First slide"  >
+                </div>
+                <div class="carousel-item">
+                  <img id="video2" class="d-block w-100" src="{{ url_for('video_feed2') }}" alt="Second slide">
+                </div>
+              </div>
+              <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+        </div>
+        <!-- video area end -->
+        {% for cam in cams %}
+          <p style="color: black;">{cam}</p>
+        {% endfor %}
+      </div>
+
+
+
+
+    <script>
+
+      document.addEventListener("DOMContentLoaded", function(){
+          var cams = JSON.parse('{{ cams | tojson}}');  
+          console.log(cams);
+
+          if (cams.length == 0) {
+            console.log('No cameras detected.');
+            document.getElementById("video").src="{{url_for('static', filename='img/static.gif')}}";
+            document.getElementById("video2").src="{{url_for('static', filename='img/static.gif')}}";
+          }
+        });
+      
+      // document.getElementById('text_mode').addEventListener('click', function(){
+      //   console.log('you clicked the toggle')
+      // });
+
+      // list of booleans for completed tasks
+      // when a task is completed, it is changed to true
+      let completedAssignments = [false, false, false, false, false, false, true, true, false];
+      var nextLevelUnlocked = false;
+
+      // move +j1
+      $(function() {
+      $('a#clockwise').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/clockwise',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[0] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          setTimeout(() => {  toggleButton(); }, 10000);
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j1
+      $(function() {
+      $('a#counter-clockwise').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/counter-clockwise',
+          function(data) {
+            //do nothing
+        });
+        completedAssignments[1] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move +j2
+      $(function() {
+      $('a#j2-plus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/j2-plus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[2] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j2
+      $(function() {
+      $('a#j2-minus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/j2-minus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[3] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move +j3
+      $(function() {
+      $('a#j3-plus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/j3-plus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[4] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j3
+      $(function() {
+      $('a#j3-minus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/j3-minus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[5] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+// - - - - - - - - - - - - - - - - - - -
+
+      // move +j1
+      $(function() {
+      $('a#x-plus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/x-plus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[0] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          setTimeout(() => {  toggleButton(); }, 10000);
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j1
+      $(function() {
+      $('a#x-minus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/x-minus',
+          function(data) {
+            //do nothing
+        });
+        completedAssignments[1] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move +j2
+      $(function() {
+      $('a#y-plus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/y-plus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[2] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j2
+      $(function() {
+      $('a#y-minus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/y-minus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[3] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move +j3
+      $(function() {
+      $('a#z-plus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/z-plus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[4] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // move -j3
+      $(function() {
+      $('a#z-minus').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/z-minus',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[5] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+// - - - - - - - - - - - - - - - - - -
+
+      // close gripper
+      $(function() {
+      $('a#grip').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/grip',
+          function(data) {
+            //do nothing
+        });
+        completedAssignments[6] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // open gripper 
+      $(function() {
+      $('a#release').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/release',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[7] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // 
+      $(function() {
+      $('a#disable').on('click', function(e) {
+        e.preventDefault()
+        $.getJSON('/disable-gripper',
+          function(data) {
+            //do nothing;
+        });
+        return false;
+      });
+      });
+
+      $(function() {
+      $('a#home').on('click', function(e) {
+        var audio = new Audio("{{url_for('static', filename='sound/click.mp3')}}");
+        audio.play();
+        e.preventDefault()
+        $.getJSON('/home',
+          function(data) {
+            //do nothing;
+        });
+        completedAssignments[8] = true;
+        if (completedAssignments.includes(false) == false && nextLevelUnlocked == false){
+          toggleButton();
+          nextLevelUnlocked = true;
+        }
+        return false;
+      });
+      });
+
+      // function for playing success chime: level_up1.mp3
+      function playSuccessChime() {
+        var successChime = new Audio("{{url_for('static', filename='sound/level_up1.mp3')}}");
+          successChime.play();
+      }  
+
+      // enable continue button and play success chime when first assignment is complete
+      function toggleButton() {
+        document.getElementById("continueButton").className = 'btn btn-success'; 
+        document.getElementById("continueLink").href="/blockly";
+        document.getElementById("continueLink").onclick = playSuccessChime();
+      }
+
+      function togglePolar() {
+        document.getElementById("polar").className = 'btn btn-success active'; 
+        document.getElementById("cartesian").className = 'btn btn-secondary disabled'; 
+
+        document.getElementById("cartesian-control").className = 'control-off'; 
+        document.getElementById("polar-control").className = 'control-on'; 
+        
+      }
+
+      function toggleCartesian() {
+        document.getElementById("cartesian").className = 'btn btn-success active'; 
+        document.getElementById("polar").className = 'btn btn-secondary disabled'; 
+
+        document.getElementById("polar-control").className = 'control-off'; 
+        document.getElementById("cartesian-control").className = 'control-on'; 
+        
+      }
+    </script>
+
+    <script>
+      // TODO: Use this to submit the 'Speed' slider value to the server
+      $(document).ready(function() {
+      $('form').on('submit', function(event) {
+          $.ajax({
+              data : {
+                  speed : $('#speed').val(),
+              },
+              type : 'POST',
+              url : '/set-speed'
+          })
+          .done(function(data) {
+              if (data.error) {
+                  $('#errorAlert').text(data.error).show();
+                  $('#successAlert').hide();
+              }
+              else {
+                  $('#successAlert').text(data.name).show();
+                  $('#errorAlert').hide();
+              }
+          });
+          event.preventDefault();
+      });
+    });
+
+      // set the width of the side navigation to 250px and the left margin of the page content to 250px
+      function openNav() {
+        document.getElementById("mySidenav").style.width = "270px";
+        document.getElementById("main").style.marginLeft = "270px";
+      }
+
+      // set the width of the side navigation to 0 and the left margin of the page content to 0 
+      function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+      }
+    </script>
+  </body>
+</html>

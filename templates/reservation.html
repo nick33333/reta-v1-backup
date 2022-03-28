@@ -1,0 +1,68 @@
+<!DOCTYPE html> 
+<html lang='en'> 
+	<head> 
+		<title>RETA</title> 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- javascript start -->
+    <script src="https://kit.fontawesome.com/09fb2cec73.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- javascript end -->
+    <!-- css start -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+		<style type="text/css"> 
+			* { 
+				font-family: sans-serif; 
+			}   
+		</style> 
+    <!-- css end -->
+	</head> 
+    <!-- page start -->
+	<body style="width: 100vw; height: 100vh; overflow: hidden; background: radial-gradient(circle, rgba(238,226,174,1) 0%, rgba(233,148,148,1) 100%);"> 
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <h1 style="text-align: center; margin-top: 5%;">Select an available date and time to use the robot</h1>
+        <!-- calendar start -->
+        <div style="display: flex; justify-content: center;">
+            <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23ffffff&amp;ctz=America%2FLos_Angeles&amp;src=Y185ZXZ0bm1qNmFka2tjYmdoZjkzYnI0bWQzY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&amp;color=%238E24AA&amp;mode=WEEK&amp;title=RETA%20Reservation&amp;showPrint=0&amp;showTabs=0&amp;showCalendars=1&amp;showNav=1&amp;showTitle=0" style="border-width:0" width="800" height="400" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <!-- calendar end -->
+        <!-- reservation form start -->
+        <div style="display: flex; justify-content: center; margin-top: 1%;">
+            <form class="form-group">
+                <label for="reservation">When do you want to use RETA?:</label>
+                <input type="datetime-local" id="reservation" name="reservation">
+                <button type="submit" class='btn btn-success hover'>submit</button>
+            </form>
+        </div>
+        <!-- reservation form end -->
+        <script>
+            $(document).ready(function() {
+            $('form').on('submit', function(event) {
+                $.ajax({
+                    data : {
+                        name : $('#reservation').val(),
+                    },
+                    type : 'POST',
+                    url : '/reservation-handler'
+                })
+                .done(function(data) {
+                    if (data.error) {
+                        $('#errorAlert').text(data.error).show();
+                        $('#successAlert').hide();
+                      }
+                    else {
+                        $('#successAlert').text(data.name).show();
+                        $('#errorAlert').hide();
+                      }
+                    });
+                    event.preventDefault();
+                  });
+                });
+          </script>
+	</body> 
+    <!-- page end -->
+</html>

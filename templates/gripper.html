@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html lang='en'> 
+	<head> 
+		<title>RETA</title> 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- javascript start -->
+    <script src="https://kit.fontawesome.com/09fb2cec73.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- javascript end -->
+    <!-- css start -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+		<style type="text/css"> 
+			* { 
+				font-family: sans-serif; 
+			}   
+		</style> 
+    <!-- css end -->
+	</head> 
+	<body style="width: 100%; height: 95vh; overflow: hidden;"> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <!-- page start -->
+    <div class="row">
+      <!-- Control Panel Start -->
+      <div class="col-8" style="background: radial-gradient(circle, rgba(238,226,174,1) 0%, rgba(233,148,148,1) 100%); height:100vh;">
+        <h1 style="text-align: center;">Try opening and closing the gripper:</h1>
+        
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <form style="display:inline-block;">
+              <a href=# id=grip><button class='btn btn-default' style="font-size : 20em;  border: 2px solid black;"><i class="fas fa-hand-rock"></i></button></a>
+          </form>
+          <form style="display:inline-block;">
+            <a href=# id=release><button class='btn btn-default' style="font-size : 20em;  border: 2px solid black;"><i class="fas fa-hand-paper"></i></button></a>
+          </form>
+        </div>
+        
+        <div style="text-align: center;">
+          <a id="continueLink" href="/control-panel"><button id="continueButton" class='btn btn-secondary' style='justify-content: center;'>Continue</button></a>
+        </div>
+      </div>
+      <!-- Control Panel End -->
+
+      <!-- Video Area Start -->
+      <div class="col-4" style="background-color: yellow; height:100vh;">
+          <div class="row" style="height:50%; background-color: green; border: solid 1px lightblue;">
+              <img src="{{ url_for('video_feed') }}" width="100%" height="100%">
+          </div>
+          <div class="row" style="height:50%; background-color: orange;">
+            <img  src="{{ url_for('rpi_camera') }}" width="100%" height="100%">
+          </div>
+      </div>
+      <!-- Video Area End -->
+    </div>
+    <!-- page end -->
+
+    <script type=text/javascript>
+      // set flags for tracking completed events
+      var gripOpenComplete = false;
+      var gripCloseComplete = false;
+      var assignmentComplete = false;
+
+      // function for playing a success chime
+      function playSuccessChime() {
+        var successChime = new Audio("{{url_for('static', filename='sound/level_up1.mp3')}}");
+          successChime.play();
+      }  
+
+      // function for enabling the continue button 
+      function toggleButton() {
+        document.getElementById("continueButton").className = 'btn btn-success'; 
+        document.getElementById("continueLink").href="/control-panel";
+        document.getElementById("continueLink").onclick = playSuccessChime();
+      }
+
+      // function for activating the dobot gripper (closed position)
+      $(function() {
+        $('a#grip').on('click', function(e) {
+          e.preventDefault()
+          $.getJSON('/grip',
+            function(data) {
+              //do nothing;
+          });
+          // set flag to indicate completed movement
+          gripCloseComplete = true;
+          // if user has completed both assignments, the continue button is enabled
+          if (gripCloseComplete == true && gripOpenComplete == true && assignmentComplete == false){
+            setTimeout(() => {  toggleButton(); }, 5000);
+            assignmentComplete = true;
+          }
+          return false;
+        });
+      });
+
+      // function for activating the dobot gripper (open position)
+      $(function() {
+        $('a#release').on('click', function(e) {
+          e.preventDefault()
+          $.getJSON('/release',
+              function(data) {
+            //do nothing
+          });
+          // set flag to indicate completed movement
+          gripOpenComplete = true;
+          // if user has completed both assignments, the continue button is enabled
+          if (gripCloseComplete == true && gripOpenComplete == true && assignmentComplete == false){
+            setTimeout(() => {  toggleButton(); }, 5000);
+            assignmentComplete = true;
+          }
+          return false;
+        });
+      });
+    </script>
+	</body> 
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html> 
+<html lang='en'> 
+	<head> 
+		<title>RETA</title> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <!-- javascript start -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/09fb2cec73.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- javascript end -->
+    <!-- style start -->
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+      .margin {
+        margin: 1em;
+      }
+    </style>
+    <!-- style end -->
+	</head> 
+
+	<body style="width: 100%; height: 95vh; overflow: hidden;"> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <!-- intro pop-up start -->
+    <div id="popUp" class="jumbotron shadow animate__animated animate__fadeIn animate__delay-1s" style=" width:50%;  z-index: 31; position: absolute; left: 50%; top: 50%;   -webkit-transform: translate(-50%, -50%); transform: translate(-50%, -50%); padding: 3%;">
+      <h1 style="text-align: center;">Welcome to RETA</h1>
+      <p style="  text-align: justify; text-justify: inter-word;">RETA (Robotics Educational Teaching Agent) is an interactive tool for teaching and learning robotics. You will have live, remote access to a real educational robotic arm located at one of our robotics hubs.</p>
+      <button class="btn btn-block btn-light hover" style="margin-top: auto;" onclick="hidePopUp();">Continue</button>
+    </div>
+    <!-- intro pop-up end -->
+
+    <div class="row">
+      <!-- Control Panel Start -->
+      <div class="col-8" style="background: radial-gradient(circle, rgba(238,226,174,1) 0%, rgba(233,148,148,1) 100%); height:100vh; padding: 3em;">
+        <h1 id="instructions" class="animate__animated animate__fadeIn animate__slower" style="text-align: center;">Try moving the dobot:</h1>
+        <div style="display: flex; align-items: center; justify-content: center;">
+          <form class="margin" style="display:inline-block;">
+              <a href=# id=joint1><button class='btn btn-default' style="font-size: 50px; width: 100%; height: 100%; border: 2px solid black;">Left / Right</button></a>
+          </form>
+          <form class="margin" style="display:inline-block;">
+            <a href=# id=joint2><button class='btn btn-default' style="font-size: 50px; width: 100%; height: 100%; border: 2px solid black;">In / Out</button></a>
+          </form>
+        </div>
+        <div class="margin" style="text-align: center;">
+          <a id="continueLink" href="#"><button id="continueButton" class='btn btn-secondary disabled' style='justify-content: center; font-size : 33px;'>Continue</button></a>
+        </div>
+      </div>
+      <!-- Control Panel End -->
+      <!-- Video Area Start -->
+      <div class="col-4" style="background-color: yellow; height:100vh;">
+          <div class="row" style="height:50%; background-color: green; border: solid 1px lightblue;">
+              <img src="{{ url_for('video_feed') }}" width="100%" height="100%">
+          </div>
+          <div class="row" style="height:50%; background-color: orange;">
+            <img  src="{{ url_for('rpi_camera') }}" width="100%" height="100%">
+          </div>
+      </div>
+      <!-- Video Area End -->
+    </div>
+
+    <script>
+      // javascript for start.html page
+      function hidePopUp() {
+          document.getElementById("popUp").className = 'animate__animated animate__fadeOut';
+          setTimeout(() => {  document.getElementById("popUp").style = 'display: none;'; }, 1100);
+      }
+
+      // create flags for task completion
+      var joint_1_complete = false;
+      var joint_2_complete = false;
+      var first_move_complete = false;
+      var assignmentComplete = false;
+
+      // control for joint-1 demo
+      $(function() {
+        $('a#joint1').on('click', function(e) {
+          var audio = new Audio("{{url_for('static', filename='sound/bell1.mp3')}}");
+          audio.play();
+          e.preventDefault()
+          $.getJSON('/joint-1-demo',
+              function(data) {
+            //do nothing
+          });
+          // display 'continue' button after 10 seconds
+          joint_1_complete = true;
+          if (joint_1_complete == true && joint_2_complete == true && assignmentComplete == false){
+            setTimeout(() => {  toggleButton(); }, 10000);
+            assignmentComplete = true;
+          }
+          if (first_move_complete == false) {
+            first_move_complete = true;
+            setTimeout(() => {  press_in_out(); }, 10000);
+            
+          }
+          return false;
+        });
+      });
+
+      // control for joint-2 demo
+      $(function() {  
+        $('a#joint2').on('click', function(e) {
+          var audio = new Audio("{{url_for('static', filename='sound/bell1.mp3')}}");
+          audio.play();
+          
+          e.preventDefault()
+          $.getJSON('/joint-2-demo',
+              function(data) {
+            //do nothing
+          });
+          // display 'continue' button after 10 seconds
+          joint_2_complete = true;
+          if (joint_1_complete == true && joint_2_complete == true && assignmentComplete == false){
+            setTimeout(() => {  toggleButton(); }, 10000);
+            assignmentComplete = true;
+          }
+          if (first_move_complete == false) {
+            first_move_complete = true;
+            setTimeout(() => {  press_left_right(); }, 10000);
+          }
+          return false;
+        });
+      });
+
+      // function for playing success chime: level_up1.mp3
+      function playContinueChime() {
+        var chime = new Audio("{{url_for('static', filename='sound/level_up1.mp3')}}");
+        chime.play();
+      }  
+
+      // function for playing success chime: level_up1.mp3
+      function playSuccessChime() {
+        var chime = new Audio("{{url_for('static', filename='sound/success1.mp3')}}");
+        chime.play();
+      }  
+
+      // enable continue button and play success chime when first assignment is complete
+      function toggleButton() {
+        document.getElementById("continueButton").className = 'btn btn-success'; 
+        document.getElementById("continueLink").href="/gripper-demo";
+        document.getElementById("continueLink").onclick = playContinueChime();
+      }
+
+      // function for updating page instructions
+      function press_in_out() {
+        document.getElementById("instructions").innerHTML = 'Now try moving in / out:';
+        document.getElementById("instructions").className = 'animate__animated animate__flash animate__repeat-3'; 
+        document.getElementById("continueLink").onclick = playSuccessChime();
+      }
+
+      // function for updating page instructions
+      function press_left_right() {
+        document.getElementById("instructions").innerHTML = 'Now try moving left / right';
+        document.getElementById("instructions").className = 'animate__animated animate__flash animate__repeat-3'; 
+        document.getElementById("continueLink").onclick = playSuccessChime();
+      }
+    </script>
+	</body> 
+</html>
